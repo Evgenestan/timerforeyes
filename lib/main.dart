@@ -14,6 +14,7 @@ void main() async {
   runApp(MyApp());
 }
 
+// Названия в camelCase - chkNotification (и вообще лучше выбирать сокращения понятнее, а то и не сокращать вовсе, тут ты сэкономил 2 символа в названии переменной, но зачем?)
 bool chknotification = true;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 int hour = -1;
@@ -23,29 +24,28 @@ int hourTempStart = 0;
 int minute = 0;
 int minuteStart = 0;
 
+// Если у тебя возникает желание написать такой комментарий - значит ты считаешь, что может быть не очень понятно из кода, ЧТО он делает - и это повод написать код понятнее и не писать комментарий
 ///////////////////////////////////////////////////<Notification>///////////////////////////////////////////////////
+// Тоже самое - мне приходится понимать из кода, что эта функция инициализирует нотификации, но можно было и назвать ее сразу initial(ize)Notifications
 void initialN() {
   var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
   var initializationSettingsIOS = IOSInitializationSettings();
-  var initializationSettings = InitializationSettings(
-      initializationSettingsAndroid, initializationSettingsIOS);
+  var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: selectNotification);
+  flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: selectNotification);
 }
 
+// Здесь же ты не написал selectN, или вообще slktn
 Future selectNotification(String payload) {
   debugPrint('payload $payload');
   return null;
 }
 
+// И здесь, хотя название shwntf выглдяит отлично
 void showNotification() async {
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'your channel id', 'your channel name', 'your channel description',
-      importance: Importance.Max, priority: Priority.High);
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails('your channel id', 'your channel name', 'your channel description', importance: Importance.Max, priority: Priority.High);
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-  var platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+  var platformChannelSpecifics = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
   await flutterLocalNotificationsPlugin
       .show(
@@ -58,6 +58,7 @@ void showNotification() async {
       .whenComplete(() => chknotification = false);
 }
 
+// Вместо этого комментария и предыдущего стоило вынести эти функции в отдельный файл/класс
 ///////////////////////////////////////////////////</Notification>///////////////////////////////////////////////////
 
 class MyApp extends StatelessWidget {
@@ -71,6 +72,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// В будущем не стоит совмещать в одном файле несколько классов-виджетов, как тут у тебя - MyApp, MyHomePage
+// Их можно писать в одном файле, только если они очень связанны (если бы ты решил разбить один неделимый виджет на два поменьше и попроще)
 class MyHomePage extends StatefulWidget {
   final String title;
 
@@ -80,6 +83,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+// Збс, что стейт - приватный класс (начинается с _)
+// Но иногда может быть так, что стейт будет публичным, тогда его внутренности необходимо делать приватными, а публичными оставлять лишь то, что ты явно хочешь оставить доступным снаружи
 class _MyHomePageState extends State<MyHomePage> {
   Timer timer;
 
@@ -164,6 +169,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: RaisedButton(
                       color: Colors.grey[500],
+                      // Лучше выносить подобные функции отдельно, как ты вынес clockIn и startwork (кстати - camelCase: startWork!)
+                      // Например: onPressed: _yourPressureHandler
+                      // Допустимо писать так, как написал ты,, если ты в функции используешь замыкания, вроде onPressed: (someParam) => _yourPressureHandler(someParam, anotherParamFromClosure)
                       onPressed: () async {
                         print('presed');
                         if (timer == null) {
@@ -171,6 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           startwork();
                         }
                       },
+                      // Аналогично
                       onLongPress: () {
                         if (timer != null) {
                           timer.cancel();
@@ -193,6 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // camelCase! -> startWork
   // The callback for our alarm
   void startwork() {
     setState(() {
