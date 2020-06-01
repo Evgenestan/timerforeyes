@@ -7,7 +7,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'global_variable.dart';
 
 
+
+
+
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+
 
 void initializeNotification() {
   var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
