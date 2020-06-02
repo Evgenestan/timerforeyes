@@ -33,19 +33,13 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
 
+
+
   int pageIndex = 0;
-  static final Key key2 = GlobalKey();
-  @override
-  void initState() {
-
-    super.initState();
-    print('$key2');
 
 
-  }
 
-
-  final MyHomePage _home = MyHomePage(key: key2);
+  MyHomePage get _home => MyHomePage();
   final SecondPage _second = SecondPage();
 
 
@@ -61,7 +55,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
       default: return null;
     }
   }
-
 
 
 
@@ -88,6 +81,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             });
           },
         ),
+
         body: Container(
           child: _showPage,
         ));

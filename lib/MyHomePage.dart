@@ -1,43 +1,35 @@
 import 'dart:async';
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-
-
-
+import 'StreamCreater.dart';
+import 'android_alarm_manager.dart';
 import 'global_variable.dart';
 import 'theme.dart';
 
-
+// Збс, что стейт - приватный класс (начинается с _)
+// Но иногда может быть так, что стейт будет публичным, тогда его внутренности необходимо делать приватными, а публичными оставлять лишь то, что ты явно хочешь оставить доступным снаружи
 class MyHomePage extends StatefulWidget {
-
-  MyHomePage({Key key}) : super(key: key);
-
-
+  @override
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-// Збс, что стейт - приватный класс (начинается с _)
-// Но иногда может быть так, что стейт будет публичным, тогда его внутренности необходимо делать приватными, а публичными оставлять лишь то, что ты явно хочешь оставить доступным снаружи
 class _MyHomePageState extends State<MyHomePage> {
   bool firstRun = true;
   Timer timer;
+  var returnMinuteVar;
 
   //DateTime time = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: GlobalKey(),
       appBar: AppBar(
         title: Text('title1'),
-
       ),
-
-
       body: Column(
         children: <Widget>[
           Expanded(
@@ -60,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: EdgeInsets.all(8),
                     child: Center(
                       child: Text(
-                        '$hourStart:$minuteStart',
+                        '$startWorkTime',
                         style: TextStyle(
                           fontSize: 100,
                         ),
@@ -91,12 +83,28 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Padding(
                     padding: EdgeInsets.all(8),
                     child: Center(
-                      child: Text(
-                        '$hour:$minute',
-                        style: TextStyle(
-                          fontSize: 100,
-                        ),
-                        textAlign: TextAlign.center,
+                      child: StreamBuilder<int>(
+                        stream: StreamCreater(),
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.active:
+                              return Text(
+                                '$hour',
+                                style: TextStyle(
+                                  fontSize: 100,
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                            default:
+                              return Text(
+                                '$hour',
+                                style: TextStyle(
+                                  fontSize: 100,
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -111,10 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: RaisedButton(
                       color: buttonBackgroundColor,
-
-                      onPressed: () async { onPressButton(); },
-                      // Аналогично
-                      onLongPress: () { onLongPressButton(); },
+                      onPressed: onPressButton,
+                      onLongPress: onLongPressButton,
                       child: Text('Start Work')),
                 ),
               ),
@@ -125,52 +131,34 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // camelCase! -> startWork
-  // The callback for our alarm
+
+
+  void setStartWorkTime() {
+    setState(() {
+      var tempTime = DateTime.now();
+      startWorkTime = DateFormat.Hm().format(tempTime);
+    });
+  }
+
+  void onLongPressButton() {
+    if(timerOff) {
+      setState(() {
+        startWorkTime = '00:00';
+        hour = '00:00';
+      });
+    } else {
+      timerOff = true;
+    }
+  }
 
   void onPressButton() {
-
-
     print('presed');
-    if (timer == null) {
-      //startAlarm();
-      callbackAlarm();
-    }
+    if (timerOff) {
+      timeStart = DateTime.now().millisecondsSinceEpoch;
+      timerOff = false;
 
-
-  }
-  void onLongPressButton() {
-    if (timer != null) {
-      timer.cancel();
-      timer = null;
-    } else {
-      setState(() {
-        minute = 0;
-        hour = 0;
-        print('obnulai $minute');
-      });
+      startAlarm();
+      setStartWorkTime();
     }
   }
-
-  void callbackAlarm() {
-    var timeStart = DateTime.now().millisecondsSinceEpoch;
-    setState(() {
-      minuteStart = DateTime.now().minute;
-      hourStart = DateTime.now().hour;
-      print('${minuteStart/1000}');
-    });
-
-    timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      print('Before setState');
-      setState(() {
-        print('setState');
-
-        var timenow = ((DateTime.now().millisecondsSinceEpoch - timeStart)/(1000*60));
-
-        minute = timenow.toInt();//DateTime.now().minute - minuteStart;
-
-
-    });
-  });
-    }
 }
