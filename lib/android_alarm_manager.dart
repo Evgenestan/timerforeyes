@@ -14,6 +14,8 @@ class AlarmHelper {
     print('schedule');
 
     await AndroidAlarmManager.cancel(_REQUEST_CODE);
-    await AndroidAlarmManager.oneShot(Duration(seconds: 5), _REQUEST_CODE, startAlarm, exact: true, wakeup: true);
+    await AndroidAlarmManager.oneShot(
+        Duration(seconds: 5), _REQUEST_CODE, startAlarm,
+        exact: true, wakeup: true);
   }
 }

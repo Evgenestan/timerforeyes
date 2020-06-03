@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timerforeyes/notification.dart';
 
 import 'StreamCreater.dart';
 import 'android_alarm_manager.dart';
@@ -22,106 +23,89 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer timer;
   var returnMinuteVar;
 
-  //DateTime time = DateTime.now();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('title1'),
+        title: Text('Главная'),
       ),
       body: Column(
         children: <Widget>[
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: Padding(
+          Flexible(
+            flex: 2,
+            child: FittedBox(
+              child: Column(
+                children: <Widget>[
+                  Padding(
                     padding: EdgeInsets.all(8),
                     child: Text(
                       'Время начала работы',
-                      style: TextStyle(
-                        fontSize: 30,
-                      ),
+                      textScaleFactor: 2,
                       textAlign: TextAlign.center,
                     ),
                   ),
-                ),
-                Container(
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Center(
-                      child: Text(
-                        '$startWorkTime',
-                        style: TextStyle(
-                          fontSize: 100,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
+                  Padding(
+                    padding: EdgeInsets.all(1),
                     child: Text(
-                      'Время проведенное в работе',
-                      style: TextStyle(
-                        fontSize: 30,
-                      ),
+                      '$startWorkTime',
+                      textScaleFactor: 8,
                       textAlign: TextAlign.center,
                     ),
                   ),
-                ),
-                Container(
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Center(
-                      child: StreamBuilder<int>(
-                        stream: StreamCreater(),
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.active:
-                              return Text(
-                                '$hour',
-                                style: TextStyle(
-                                  fontSize: 100,
-                                ),
-                                textAlign: TextAlign.center,
-                              );
-                            default:
-                              return Text(
-                                '$hour',
-                                style: TextStyle(
-                                  fontSize: 100,
-                                ),
-                                textAlign: TextAlign.center,
-                              );
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          Container(
-            child: Expanded(
+          Flexible(
+            flex: 2,
+            child: FittedBox(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(1),
+                    child: Text(
+                      'Время в работе',
+                      textScaleFactor: 2,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(1),
+                    child: StreamBuilder<int>(
+                      stream: StreamCreater(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.active:
+                            return Text(
+                              '$hour',
+                              textScaleFactor: 8,
+                              textAlign: TextAlign.center,
+                            );
+                          default:
+                            return Text(
+                              '$hour',
+                              textScaleFactor: 8,
+                              textAlign: TextAlign.center,
+                            );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Container(
               child: Padding(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(20),
                 child: Center(
                   child: RaisedButton(
                       color: buttonBackgroundColor,
                       onPressed: onPressButton,
                       onLongPress: onLongPressButton,
-                      child: Text('Start Work')),
+                      child: Text('$textButtonWork')),
                 ),
               ),
             ),
@@ -131,34 +115,63 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-
-
-  void setStartWorkTime() {
-    setState(() {
-      var tempTime = DateTime.now();
-      startWorkTime = DateFormat.Hm().format(tempTime);
-    });
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (timerOff == false) {
+      startAlarm();
+      setState(() {
+        var tempTime = DateTime.fromMillisecondsSinceEpoch(timeStart);
+        startWorkTime = DateFormat.Hm().format(tempTime);
+        textButtonWork = 'Stop Work';
+      });
+    }
   }
 
-  void onLongPressButton() {
-    if(timerOff) {
-      setState(() {
+  void onLongPressButton() async {
+    if (timerOff) {
+      var tempTime = await prefs.getInt('timeStart');
+      tempTime = DateTime.now().millisecondsSinceEpoch - tempTime;
+      var tempTimeAll = await prefs.getInt('timeAll');
+      if (tempTimeAll != null) {
+        tempTime = tempTime + tempTimeAll;
+      }
+      await prefs.setInt('timeAll', tempTime);
+      await prefs.setInt('timeStart', 0);
+      await cancelNotification();
+      await setState(() {
         startWorkTime = '00:00';
         hour = '00:00';
+        textButtonWork = 'Start Work';
       });
     } else {
       timerOff = true;
+      setState(() {
+        textButtonWork = 'Reset Time';
+      });
     }
   }
 
   void onPressButton() {
     print('presed');
     if (timerOff) {
+      showRepeatNotification();
       timeStart = DateTime.now().millisecondsSinceEpoch;
       timerOff = false;
-
       startAlarm();
       setStartWorkTime();
+      setState(() {
+        textButtonWork = 'Stop Work';
+      });
     }
+  }
+
+  void setStartWorkTime() async {
+    setState(() {
+      var tempTime = DateTime.now();
+      startWorkTime = DateFormat.Hm().format(tempTime);
+    });
+    await prefs.setInt('timeStart', DateTime.now().millisecondsSinceEpoch);
   }
 }
