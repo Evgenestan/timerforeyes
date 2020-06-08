@@ -19,6 +19,7 @@ Future<void> createNotificationChannel() async {
     'Main',
     'These notifications are required for the application to work.',
     importance: Importance.High,
+
   );
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
@@ -68,7 +69,7 @@ void showNotification() async {
       enableVibration: true,
       ongoing: true,
       onlyAlertOnce: false,
-      importance: Importance.Max,
+      importance: Importance.High,
       priority: Priority.High);
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
   var platformChannelSpecifics = NotificationDetails(
@@ -79,7 +80,9 @@ void showNotification() async {
 
 Future<void> showRepeatNotification() async {
   var androidPlatformChannelSpecifics =
-      AndroidNotificationDetails('1', 'name', 'description');
+      AndroidNotificationDetails('1', 'name', 'description', importance: Importance.High,
+        priority: Priority.High,
+        onlyAlertOnce: false);
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
   var platformChannelSpecifics = NotificationDetails(
       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);

@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timerforeyes/settings.dart';
+import 'package:timerforeyes/theme.dart';
+import 'settings.dart';
 
 import 'global_variable.dart';
 
@@ -15,16 +18,20 @@ class _SecondPageState extends State<SecondPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text('Статистика'),
+        backgroundColor: appBarColor,
+        title: Text('Статистика', style: TextStyle(color: colorText)),
         actions: <Widget>[
           PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert, color: iconColor),
+            color: backgroundColor,
             onSelected: choiseAction,
             itemBuilder: (BuildContext contex) {
               return Constant.choices.map((String choise) {
                 return PopupMenuItem<String>(
                   value: choise,
-                  child: Text(choise),
+                  child: Text(choise, style: TextStyle(color: colorText),),
                 );
               }).toList();
             },
@@ -42,6 +49,7 @@ class _SecondPageState extends State<SecondPage> {
                   'Общее время работы',
                   textScaleFactor: 2,
                   textAlign: TextAlign.center,
+                    style: TextStyle(color: colorText)
                 ),
               ),
               Row(
@@ -50,11 +58,13 @@ class _SecondPageState extends State<SecondPage> {
                     '$allTimeWorkH',
                     textScaleFactor: 6,
                     textAlign: TextAlign.center,
+                      style: TextStyle(color: colorText)
                   ),
                   Text(
                     '  hour',
                     textScaleFactor: 6,
                     textAlign: TextAlign.center,
+                      style: TextStyle(color: colorText)
                   )
                 ],
               ),
@@ -64,11 +74,13 @@ class _SecondPageState extends State<SecondPage> {
                     '$allTimeWorkM',
                     textScaleFactor: 6,
                     textAlign: TextAlign.center,
+                      style: TextStyle(color: colorText)
                   ),
                   Text(
                     ' min  ',
                     textScaleFactor: 6,
                     textAlign: TextAlign.center,
+                      style: TextStyle(color: colorText)
                   )
                 ],
               ),
@@ -83,6 +95,22 @@ class _SecondPageState extends State<SecondPage> {
     if (choice == Constant.resetAllTime) {
       await prefs.setInt('timeAll', 0);
       setAllTimeWork();
+    }
+    if(choice == Constant.settings) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SettingsPage()),
+      ).whenComplete(() {
+        setState(() {
+          bottomNavBarColor;
+          backgroundColorNavBar;
+          buttonBackgroundColor;
+          appBarColor;
+          backgroundColor;
+          colorText;
+          iconColor;
+        });
+      });
     }
   }
 

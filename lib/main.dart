@@ -2,6 +2,7 @@ import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MyHomePage.dart';
@@ -11,12 +12,21 @@ import 'notification.dart';
 import 'theme.dart';
 
 void main() async {
+  dispose = reaction((_) => isEnable.isEnable, (msg) => reCreate(msg));
+
   WidgetsFlutterBinding.ensureInitialized();
   await AndroidAlarmManager.initialize();
   initializeNotification();
   await createNotificationChannel();
   prefs = await SharedPreferences.getInstance();
+  await setTheme();
   await resumeWork();
+}
+
+void reCreate(var value) {
+  print('reCreate');
+
+  runApp(MaterialApp(home: BottomNavBar()));
 }
 
 void resumeWork() async {
@@ -25,8 +35,30 @@ void resumeWork() async {
     timeStart = tempTime;
     timerOff = false;
   }
+  runApp(MaterialApp(home: BottomNavBar()));
+}
 
-  runApp(MaterialApp(home: BottomNavBar(), theme: ThemeData.dark()));
+void setTheme() async {
+  var localTheme = await prefs.getString('theme');
+  if (localTheme == 'dark') {
+    isSwitched = true;
+    isEnable.getTrue();
+    bottomNavBarColor = bottomNavBarColorDark;
+    backgroundColorNavBar = backgroundColorDarkNavBar;
+    buttonBackgroundColor = buttonBackgroundColorDark;
+    appBarColor = appBarColorDark;
+    backgroundColor = backgroundColorDark;
+    colorText = colorTextDark;
+    iconColor = iconColorDark;
+  } else {
+    bottomNavBarColor = bottomNavBarColorLight;
+    backgroundColorNavBar = backgroundColorLightNavBar;
+    buttonBackgroundColor = buttonBackgroundColorLight;
+    appBarColor = appBarColorLight;
+    backgroundColor = backgroundColorLight;
+    colorText = colorTextLight;
+    iconColor = iconColorLight;
+  }
 }
 
 class BottomNavBar extends StatefulWidget {
@@ -45,16 +77,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: backgroundColor,
         bottomNavigationBar: CurvedNavigationBar(
           index: pageIndex,
           height: 50.0,
           items: <Widget>[
-            Icon(Icons.add, size: 30),
-            Icon(Icons.list, size: 30),
+            Icon(Icons.add, size: 30, color: iconColor),
+            Icon(Icons.list, size: 30, color: iconColor),
           ],
-          color: Colors.grey[700],
-          buttonBackgroundColor: buttonBackgroundColor,
-          backgroundColor: Colors.grey[850],
+          color: bottomNavBarColor,
+          buttonBackgroundColor: bottomNavBarColor,
+          backgroundColor: backgroundColorNavBar,
           animationCurve: Curves.linearToEaseOut,
           animationDuration: Duration(milliseconds: 400),
           onTap: (int onTapIndex) {

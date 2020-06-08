@@ -26,10 +26,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text('Главная'),
+        backgroundColor: appBarColor,
+        title: Text('Главная', style: TextStyle(color: colorText)),
       ),
       body: Column(
+
         children: <Widget>[
           Flexible(
             flex: 2,
@@ -42,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       'Время начала работы',
                       textScaleFactor: 2,
                       textAlign: TextAlign.center,
+                        style: TextStyle(color: colorText)
                     ),
                   ),
                   Padding(
@@ -50,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       '$startWorkTime',
                       textScaleFactor: 8,
                       textAlign: TextAlign.center,
+                        style: TextStyle(color: colorText)
                     ),
                   ),
                 ],
@@ -67,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       'Время в работе',
                       textScaleFactor: 2,
                       textAlign: TextAlign.center,
+                        style: TextStyle(color: colorText)
                     ),
                   ),
                   Padding(
@@ -80,12 +86,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               '$hour',
                               textScaleFactor: 8,
                               textAlign: TextAlign.center,
+                                style: TextStyle(color: colorText)
                             );
                           default:
                             return Text(
                               '$hour',
                               textScaleFactor: 8,
                               textAlign: TextAlign.center,
+                                style: TextStyle(color: colorText)
                             );
                         }
                       },
@@ -105,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: buttonBackgroundColor,
                       onPressed: onPressButton,
                       onLongPress: onLongPressButton,
-                      child: Text('$textButtonWork')),
+                      child: Text('$textButtonWork',style: TextStyle(color: colorText))),
                 ),
               ),
             ),
