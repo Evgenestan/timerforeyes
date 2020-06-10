@@ -20,7 +20,21 @@ void main() async {
   await createNotificationChannel();
   prefs = await SharedPreferences.getInstance();
   await setTheme();
+  await checkWeek();
   await resumeWork();
+}
+
+void checkWeek() async {
+  DateTime dateOld;
+  var day = DateTime.now().weekday;
+  var dateNow = DateTime.now();
+  var datePref = prefs.getInt('dateOld');
+  datePref == null? dateOld = DateTime.fromMillisecondsSinceEpoch(0) : dateOld = DateTime.fromMillisecondsSinceEpoch(datePref);
+  if(day == 1 && (dateNow.day > dateOld.day || dateNow.month > dateOld.month || dateNow.year > dateOld.year)){
+    await prefs.setInt('dateOld', DateTime.now().millisecondsSinceEpoch);
+    await prefs.setInt('timeAll', 0);
+  }
+  print('date if $dateNow');
 }
 
 void reCreate(var value) {

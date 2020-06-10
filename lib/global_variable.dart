@@ -7,7 +7,7 @@ part 'global_variable.g.dart';
 
 int allTimeWorkH = 0;
 
-var allTimeWorkM = '00';
+var allTimeWorkM = '0';
 
 ReactionDisposer dispose;
 bool firstRun = true;

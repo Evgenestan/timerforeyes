@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timerforeyes/auth.dart';
 import 'package:timerforeyes/notification.dart';
 
 import 'StreamCreater.dart';
@@ -30,6 +31,12 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: appBarColor,
         title: Text('Главная', style: TextStyle(color: colorText)),
+        actions: <Widget>[
+          IconButton(
+            icon:  Icon(Icons.account_circle, color: iconColor,),
+            onPressed: goToAuth,
+          )
+        ],
       ),
       body: Column(
 
@@ -135,6 +142,13 @@ class _MyHomePageState extends State<MyHomePage> {
         textButtonWork = 'Stop Work';
       });
     }
+  }
+
+  void goToAuth(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AuthPage()),
+    );
   }
 
   void onLongPressButton() async {

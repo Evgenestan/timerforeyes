@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1027320013947",
+    "firebase_url": "https://timerforeyes.firebaseio.com",
+    "project_id": "timerforeyes",
+    "storage_bucket": "timerforeyes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027320013947:android:15ebdabda9c21566972ede",
+        "android_client_info": {
+          "package_name": "com.example.timerforeyes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1027320013947-ij25vjgrt0bg6ade4j931v2tjjm567m5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFWJ6tQHFNoZ66mhSVSrZbK0QklWX6n0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1027320013947-ij25vjgrt0bg6ade4j931v2tjjm567m5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

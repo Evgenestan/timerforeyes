@@ -19,7 +19,7 @@ var colorTextDark = Colors.grey[400];
 var iconColorDark = Colors.grey[400];
 
 var bottomNavBarColorLight =  Colors.grey;
-var backgroundColorLightNavBar = Colors.grey[50];
+var backgroundColorLightNavBar = Colors.grey[100];
 var buttonBackgroundColorLight = Colors.grey;
 var backgroundColorLight = Colors.grey[100];
 var appBarColorLight = Colors.grey;
