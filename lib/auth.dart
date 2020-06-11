@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:timerforeyes/auth_firebase.dart';
+import 'package:timerforeyes/global_variable.dart';
 import 'theme.dart';
 
 class AuthPage extends StatefulWidget {
@@ -43,14 +45,39 @@ class _AuthPageState extends State<AuthPage> {
         _errorMessage = '';
         _isLoading = true;
       });
-    if(validateAndSave()) {
-      await SystemChannels.textInput.invokeMethod('TextInput.hide');
-
-
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
+    if (validateAndSave()) {
+      var userId = '';
+      try {
+        if (_isLoginForm) {
+          await SystemChannels.textInput.invokeMethod('TextInput.hide');
+          userId = await signIn(_email, _password);
+          print('Signed in: $userId');
+          isAuth = true;
+          iconAuth = iconAuthTrue;
+          Firebase_User = await getCurrentUser();
+          Navigator.pop(context);
+        } else {
+          userId = await signUp(_email, _password);
+          print('Signed up user: $userId');
+          Firebase_User = await getCurrentUser();
+          isAuth = true;
+          iconAuth = iconAuthTrue;
+          Navigator.pop(context);
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        if (userId.isNotEmpty && userId != null && _isLoginForm) {
+          //widget.loginCallback();
+        }
+      } catch (e) {
+        print('Error: $e');
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.message;
+          _formKey.currentState.reset();
+        });
+      }
     }
 
 
@@ -64,7 +91,7 @@ class _AuthPageState extends State<AuthPage> {
   }
   void resetForm() {
     _formKey.currentState.reset();
-    _errorMessage = "";
+    _errorMessage = '';
   }
 
   @override

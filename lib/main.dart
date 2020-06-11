@@ -1,9 +1,11 @@
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timerforeyes/auth_firebase.dart';
 
 import 'MyHomePage.dart';
 import 'SecondPage.dart';
@@ -19,9 +21,24 @@ void main() async {
   initializeNotification();
   await createNotificationChannel();
   prefs = await SharedPreferences.getInstance();
+  checkAuth();
   await setTheme();
   await checkWeek();
   await resumeWork();
+}
+
+void checkAuth() async {
+  Firebase_User = await getCurrentUser();
+  if(Firebase_User != null) {
+    isAuth = true;
+    iconAuth = iconAuthTrue;
+  } else {
+    isAuth = false;
+    iconAuth = iconAuthFalse;
+  }
+  print('isAuth = $isAuth user = $Firebase_User');
+
+
 }
 
 void checkWeek() async {

@@ -4,17 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timerforeyes/auth.dart';
+import 'package:timerforeyes/auth_firebase.dart';
 import 'package:timerforeyes/notification.dart';
 
 import 'StreamCreater.dart';
 import 'android_alarm_manager.dart';
 import 'global_variable.dart';
 import 'theme.dart';
+import 'user_page.dart';
 
 // Збс, что стейт - приватный класс (начинается с _)
 // Но иногда может быть так, что стейт будет публичным, тогда его внутренности необходимо делать приватными, а публичными оставлять лишь то, что ты явно хочешь оставить доступным снаружи
 class MyHomePage extends StatefulWidget {
-  @override
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -33,13 +34,15 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('Главная', style: TextStyle(color: colorText)),
         actions: <Widget>[
           IconButton(
-            icon:  Icon(Icons.account_circle, color: iconColor,),
+            icon: Icon(
+              iconAuth,
+              color: iconColor,
+            ),
             onPressed: goToAuth,
           )
         ],
       ),
       body: Column(
-
         children: <Widget>[
           Flexible(
             flex: 2,
@@ -48,21 +51,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(8),
-                    child: Text(
-                      'Время начала работы',
-                      textScaleFactor: 2,
-                      textAlign: TextAlign.center,
-                        style: TextStyle(color: colorText)
-                    ),
+                    child: Text('Время начала работы',
+                        textScaleFactor: 2,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: colorText)),
                   ),
                   Padding(
                     padding: EdgeInsets.all(1),
-                    child: Text(
-                      '$startWorkTime',
-                      textScaleFactor: 8,
-                      textAlign: TextAlign.center,
-                        style: TextStyle(color: colorText)
-                    ),
+                    child: Text('$startWorkTime',
+                        textScaleFactor: 8,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: colorText)),
                   ),
                 ],
               ),
@@ -75,12 +74,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(1),
-                    child: Text(
-                      'Время в работе',
-                      textScaleFactor: 2,
-                      textAlign: TextAlign.center,
-                        style: TextStyle(color: colorText)
-                    ),
+                    child: Text('Время в работе',
+                        textScaleFactor: 2,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: colorText)),
                   ),
                   Padding(
                     padding: EdgeInsets.all(1),
@@ -89,19 +86,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       builder: (context, snapshot) {
                         switch (snapshot.connectionState) {
                           case ConnectionState.active:
-                            return Text(
-                              '$hour',
-                              textScaleFactor: 8,
-                              textAlign: TextAlign.center,
-                                style: TextStyle(color: colorText)
-                            );
+                            return Text('$hour',
+                                textScaleFactor: 8,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: colorText));
                           default:
-                            return Text(
-                              '$hour',
-                              textScaleFactor: 8,
-                              textAlign: TextAlign.center,
-                                style: TextStyle(color: colorText)
-                            );
+                            return Text('$hour',
+                                textScaleFactor: 8,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: colorText));
                         }
                       },
                     ),
@@ -120,7 +113,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: buttonBackgroundColor,
                       onPressed: onPressButton,
                       onLongPress: onLongPressButton,
-                      child: Text('$textButtonWork',style: TextStyle(color: colorText))),
+                      child: Text('$textButtonWork',
+                          style: TextStyle(color: colorText))),
                 ),
               ),
             ),
@@ -144,11 +138,27 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void goToAuth(){
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AuthPage()),
-    );
+  void goToAuth() {
+    if (isAuth) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => UserPage()),
+      ).whenComplete(() {
+        setState(() {
+          iconAuth;
+        });
+      });
+
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AuthPage()),
+      ).whenComplete(() {
+        setState(() {
+          iconAuth;
+        });
+      });
+    }
   }
 
   void onLongPressButton() async {

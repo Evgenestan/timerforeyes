@@ -26,3 +26,6 @@ var appBarColorLight = Colors.grey;
 var colorTextLight = Colors.black;
 var iconColorLight = Colors.black;
 
+var iconAuth;
+var iconAuthTrue = Icons.exit_to_app;
+var iconAuthFalse = Icons.account_circle;

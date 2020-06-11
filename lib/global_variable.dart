@@ -1,11 +1,17 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'global_variable.g.dart';
 
 int allTimeWorkH = 0;
+
+final FirebaseAuth firebase = FirebaseAuth.instance;
+
+bool isAuth;
+FirebaseUser Firebase_User;
 
 var allTimeWorkM = '0';
 
