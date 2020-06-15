@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timerforeyes/auth.dart';
 import 'package:timerforeyes/auth_firebase.dart';
 
 import 'MyHomePage.dart';
@@ -21,13 +22,23 @@ void main() async {
   initializeNotification();
   await createNotificationChannel();
   prefs = await SharedPreferences.getInstance();
-  checkAuth();
   await setTheme();
   await checkWeek();
   await resumeWork();
+  await checkAuth().whenComplete(() {
+    startApp();
+  });
 }
 
-void checkAuth() async {
+void startApp(){
+  if(isAuth) {
+    runApp(MaterialApp(home: BottomNavBar()));
+  } else {
+    runApp(MaterialApp(home: AuthPage()));
+  }
+}
+
+Future<void> checkAuth() async {
   Firebase_User = await getCurrentUser();
   if(Firebase_User != null) {
     isAuth = true;
@@ -66,7 +77,8 @@ void resumeWork() async {
     timeStart = tempTime;
     timerOff = false;
   }
-  runApp(MaterialApp(home: BottomNavBar()));
+  //runApp(MaterialApp(home: BottomNavBar()));
+
 }
 
 void setTheme() async {

@@ -124,20 +124,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    if (timerOff == false) {
-      startAlarm();
-      setState(() {
-        var tempTime = DateTime.fromMillisecondsSinceEpoch(timeStart);
-        startWorkTime = DateFormat.Hm().format(tempTime);
-        textButtonWork = 'Stop Work';
-      });
-    }
-  }
-
   void goToAuth() {
     if (isAuth) {
       Navigator.push(
@@ -148,7 +134,6 @@ class _MyHomePageState extends State<MyHomePage> {
           iconAuth;
         });
       });
-
     } else {
       Navigator.push(
         context,
@@ -157,6 +142,20 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           iconAuth;
         });
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (timerOff == false) {
+      startAlarm();
+      setState(() {
+        var tempTime = DateTime.fromMillisecondsSinceEpoch(timeStart);
+        startWorkTime = DateFormat.Hm().format(tempTime);
+        textButtonWork = 'Stop Work';
       });
     }
   }
