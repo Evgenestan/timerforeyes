@@ -54,3 +54,15 @@ Future<bool> updateProfile(String _name) async {
   });
   return success;
 }
+
+Future<void> sendPasswordResetEmail(String _email) async {
+
+  await firebase.sendPasswordResetEmail(email: _email).then((value) async {
+    Firebase_User = await getCurrentUser();
+
+  }).catchError((e) {
+    print(e);
+
+  });
+
+}

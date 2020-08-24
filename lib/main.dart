@@ -1,6 +1,5 @@
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
@@ -23,7 +22,7 @@ void main() async {
   await createNotificationChannel();
   prefs = await SharedPreferences.getInstance();
   await setTheme();
-  await checkWeek();
+  await checkDayAndWeek();
   await resumeWork();
   await checkAuth().whenComplete(() {
     startApp();
@@ -52,15 +51,22 @@ Future<void> checkAuth() async {
 
 }
 
-void checkWeek() async {
+void checkDayAndWeek() async {
   DateTime dateOld;
   var day = DateTime.now().weekday;
+  print('weekday is $day');
   var dateNow = DateTime.now();
   var datePref = prefs.getInt('dateOld');
   datePref == null? dateOld = DateTime.fromMillisecondsSinceEpoch(0) : dateOld = DateTime.fromMillisecondsSinceEpoch(datePref);
+
   if(day == 1 && (dateNow.day > dateOld.day || dateNow.month > dateOld.month || dateNow.year > dateOld.year)){
+    print('its monday');
     await prefs.setInt('dateOld', DateTime.now().millisecondsSinceEpoch);
     await prefs.setInt('timeAll', 0);
+  }
+
+  if (dateNow.day > dateOld.day || dateNow.month > dateOld.month || dateNow.year > dateOld.year) {
+    await prefs.setInt('timeAllAtDay', 0);
   }
   print('date if $dateNow');
 }
@@ -74,7 +80,7 @@ void reCreate(var value) {
 void resumeWork() async {
   var tempTime = await prefs.getInt('timeStart');
   if (tempTime != null && tempTime != 0) {
-    timeStart = tempTime;
+    timeStart = DateTime.fromMillisecondsSinceEpoch(tempTime);
     timerOff = false;
   }
   //runApp(MaterialApp(home: BottomNavBar()));

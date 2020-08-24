@@ -1,14 +1,11 @@
 import 'dart:async';
 
-
-import 'package:intl/intl.dart';
-
 import 'global_variable.dart';
 
 
 
-Stream<int> StreamCreater() {
-  StreamController<int> controller;
+Stream<Duration> StreamCreater() {
+  StreamController<Duration> controller;
 
   Timer timer;
 
@@ -22,10 +19,10 @@ Stream<int> StreamCreater() {
         print('ReturnMinute');
 
 
-        minute = (DateTime.now().millisecondsSinceEpoch - timeStart) + hour23;
+        minute = DateTime.now().difference(timeStart);
         print('$minute');
-        var tempTime = DateTime.fromMillisecondsSinceEpoch(minute);
-        hour = DateFormat.Hm().format(tempTime);
+
+        hour = '${minute.inHours} : ${minute.inMinutes - minute.inHours * 60}';
         print('$hour');
 
 
@@ -45,7 +42,7 @@ Stream<int> StreamCreater() {
     }
   }
 
-  controller = StreamController<int>(
+  controller = StreamController<Duration>(
       onListen: startTimer,
       onPause: stopTimer,
       onResume: startTimer,

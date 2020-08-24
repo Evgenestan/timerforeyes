@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:timerforeyes/settings.dart';
 import 'package:timerforeyes/theme.dart';
 import 'settings.dart';
@@ -26,7 +25,7 @@ class _SecondPageState extends State<SecondPage> {
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert, color: iconColor),
             color: backgroundColor,
-            onSelected: choiseAction,
+            onSelected: choiceAction,
             itemBuilder: (BuildContext contex) {
               return Constant.choices.map((String choise) {
                 return PopupMenuItem<String>(
@@ -84,6 +83,27 @@ class _SecondPageState extends State<SecondPage> {
                   )
                 ],
               ),
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: Text(
+                    'Время работы за сегодня',
+                    textScaleFactor: 2,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: colorText)
+                ),
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                      '$allTimeWorkAtDay',
+                      textScaleFactor: 6,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: colorText)
+                  ),
+
+                ],
+              ),
+
             ],
           ),
         ),
@@ -91,9 +111,10 @@ class _SecondPageState extends State<SecondPage> {
     );
   }
 
-  void choiseAction(String choice) async {
+  void choiceAction(String choice) async {
     if (choice == Constant.resetAllTime) {
       await prefs.setInt('timeAll', 0);
+      await prefs.setInt('timeAllAtDay', 0);
       setAllTimeWork();
     }
     if(choice == Constant.settings) {
@@ -123,21 +144,24 @@ class _SecondPageState extends State<SecondPage> {
 
   void setAllTimeWork() async {
     var tempTimeAll = await prefs.getInt('timeAll');
-    print('tempTimeAll second screen $tempTimeAll');
     if (tempTimeAll != null) {
-      tempTimeAll = tempTimeAll + hour23;
-      var tempDateTime = DateTime.fromMillisecondsSinceEpoch(tempTimeAll);
-
-      var tempHour = DateFormat.d().format(tempDateTime);
-      allTimeWorkH = int.parse(tempHour);
-
+      var tempDateTime = Duration(milliseconds: tempTimeAll);
+      print('Day = $allTimeWorkH');
       setState(() {
-        allTimeWorkH = (allTimeWorkH - 2) * 24 +
-            int.parse(DateFormat.H().format(tempDateTime));
-        allTimeWorkM = DateFormat.m().format(tempDateTime);
-        print('allTimeWork $tempDateTime');
+        allTimeWorkH = tempDateTime.inHours + tempDateTime.inDays * 24;
+        allTimeWorkM = tempDateTime.inMinutes - tempDateTime.inHours * 60;
       });
     }
+    tempTimeAll = await prefs.getInt('timeAllAtDay');
+    if (tempTimeAll != null){
+
+      setState(() {
+        var tempDateTime = Duration(milliseconds: tempTimeAll);
+        allTimeWorkAtDay = '${tempDateTime.inHours} : ${tempDateTime.inMinutes - tempDateTime.inHours * 60}';
+      });
+
+    }
+
   }
 
 // camelCase! -> startWork

@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timerforeyes/auth.dart';
-import 'package:timerforeyes/auth_firebase.dart';
 import 'package:timerforeyes/notification.dart';
 
 import 'StreamCreater.dart';
@@ -81,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(1),
-                    child: StreamBuilder<int>(
+                    child: StreamBuilder<Duration>(
                       stream: StreamCreater(),
                       builder: (context, snapshot) {
                         switch (snapshot.connectionState) {
@@ -153,22 +152,36 @@ class _MyHomePageState extends State<MyHomePage> {
     if (timerOff == false) {
       startAlarm();
       setState(() {
-        var tempTime = DateTime.fromMillisecondsSinceEpoch(timeStart);
-        startWorkTime = DateFormat.Hm().format(tempTime);
+        startWorkTime = DateFormat.Hm().format(timeStart);
         textButtonWork = 'Stop Work';
       });
     }
   }
 
   void onLongPressButton() async {
-    if (timerOff) {
-      var tempTime = await prefs.getInt('timeStart');
-      tempTime = DateTime.now().millisecondsSinceEpoch - tempTime;
-      var tempTimeAll = await prefs.getInt('timeAll');
-      if (tempTimeAll != null) {
-        tempTime = tempTime + tempTimeAll;
+    timerOff = true;
+
+      var tempTime0 = await DateTime.fromMillisecondsSinceEpoch(prefs.getInt('timeStart'));
+
+      var tempDuration = DateTime.now().difference(tempTime0);
+      var tempDurationAtDay = tempDuration;
+
+      var intTempTimeAll = await prefs.getInt('timeAll');
+      var intTempTimeAllAtDay = await prefs.getInt('timeAllAtDay');
+
+      if (intTempTimeAll != null) {
+        var tempTimeAll = await Duration(milliseconds: (prefs.getInt('timeAll')) );
+        tempDuration = tempDuration + tempTimeAll;
       }
-      await prefs.setInt('timeAll', tempTime);
+      if(intTempTimeAllAtDay != null){
+        var tempTimeAllAtDay = await Duration(milliseconds: (prefs.getInt('timeAllAtDay')) );
+        tempDurationAtDay = tempDurationAtDay +  tempTimeAllAtDay;
+      }
+
+      await prefs.setInt('timeAllAtDay', tempDurationAtDay.inMilliseconds);
+
+      await prefs.setInt('timeAll', tempDuration.inMilliseconds);
+
       await prefs.setInt('timeStart', 0);
       await cancelNotification();
       await setState(() {
@@ -176,19 +189,14 @@ class _MyHomePageState extends State<MyHomePage> {
         hour = '00:00';
         textButtonWork = 'Start Work';
       });
-    } else {
-      timerOff = true;
-      setState(() {
-        textButtonWork = 'Reset Time';
-      });
-    }
+
   }
 
   void onPressButton() {
     print('presed');
     if (timerOff) {
       showRepeatNotification();
-      timeStart = DateTime.now().millisecondsSinceEpoch;
+      timeStart = DateTime.now();
       timerOff = false;
       startAlarm();
       setStartWorkTime();

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:timerforeyes/auth_firebase.dart';
 import 'package:timerforeyes/global_variable.dart';
 import 'package:timerforeyes/main.dart';
+import 'package:timerforeyes/resetPassword.dart';
 
 import 'theme.dart';
 
@@ -19,7 +20,6 @@ class _AuthPageState extends State<AuthPage> {
   bool _isLoading;
   String _email;
   String _password;
-  String _confirmPassword;
   String _name;
   String _errorMessage;
   bool _isLoginForm;
@@ -194,6 +194,20 @@ class _AuthPageState extends State<AuthPage> {
         onPressed: toggleFormMode);
   }
 
+  Widget showResetPasswordButton() {
+    return FlatButton(
+        child: Text('Forgot password',
+            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w300)),
+        onPressed: toResetPasswordPage);
+  }
+
+  void toResetPasswordPage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => resetPasswordPage()),
+    );
+  }
+
   void toggleFormMode() {
     resetForm();
     setState(() {
@@ -262,7 +276,6 @@ class _AuthPageState extends State<AuthPage> {
 
   Widget _showForm() {
     return Container(
-        padding: EdgeInsets.all(0.0),
         child: Form(
           key: _formKey,
           child: ListView(
@@ -272,9 +285,11 @@ class _AuthPageState extends State<AuthPage> {
               showEmailInput(),
               showPasswordInput(),
               showConfirmPasswordInput(),
+              showErrorMessage(),
               showPrimaryButton(),
               showSecondaryButton(),
               showErrorMessage(),
+              showResetPasswordButton()
             ],
           ),
         ));

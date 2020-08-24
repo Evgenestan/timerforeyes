@@ -7,32 +7,36 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'global_variable.g.dart';
 
 int allTimeWorkH = 0;
+int allTimeWorkM = 0;
+
+String allTimeWorkAtDay = '00:00';
+
 
 final FirebaseAuth firebase = FirebaseAuth.instance;
 
 bool isAuth;
 FirebaseUser Firebase_User;
 
-var allTimeWorkM = '0';
+
 
 ReactionDisposer dispose;
 bool firstRun = true;
 
 String hour = '00:00';
 
-int hour23 = 75600100;
-int hourTempStart = 0;
+//int hour23 = 75600100;
+DateTime hourTempStart;
 
 Enable isEnable = Enable();
 bool isSwitched = false;
-int minute = 0;
+Duration minute;
 SharedPreferences prefs;
 String startWorkTime = '00:00';
 String textButtonWork = 'Start Work';
 Timer timer;
 bool timerOff = true;
 
-var timeStart = DateTime.now().millisecondsSinceEpoch;
+var timeStart = DateTime.now();
 
 class Constant {
   static const String resetAllTime = 'Удалить статистику';
